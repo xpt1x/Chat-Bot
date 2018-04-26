@@ -17,7 +17,7 @@ new variables[][VARTYPE] = /* Text and then its Response */
 {
 	{"fuck", "^4Check ^3FUCK ^1is good"},
 	{"boy", "^4Check ^3BOY ^1is good"},
-	{"chill", "^4Check ^3CHILL ^1is good"},
+	{"chill", "^4Check ^3CHILL ^1is good"}
 }
 
 public plugin_init() {
