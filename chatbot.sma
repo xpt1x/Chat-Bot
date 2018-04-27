@@ -1,33 +1,43 @@
 #include <amxmodx>
+#define VERSION "1.1"
 
-#define DELAY 30.0 // Delay in AD Messages
+#define DELAY 30.0 
+#define PRINTDELAY 0.2
+//#define PRINTTOALL 
 
 enum _:VARTYPE {
-	text[32], response[180]
+	text[32], response[192]
 }
 
-new const admessages[][] = // Ad Messages Here
+new admessages[][] = 
 {
-	"^1Sample ^3Text^4 1",
-	"^3Sample ^4Text^1 2",
-	"^4Sample ^1Text^3 3"
+	"^1[^4ChatBot^1] ^3Sample Text^4 1",
+	"^1[^4ChatBot^1] ^3Sample Text^4 2",
+	"^1[^4ChatBot^1] ^3Sample Text^4 3"
 }
 
-new variables[][VARTYPE] = /* Text and then its Response */
+new variables[][VARTYPE] =
 {
-	{"fuck", "^4Check ^3FUCK ^1is good"},
-	{"boy", "^4Check ^3BOY ^1is good"},
-	{"chill", "^4Check ^3CHILL ^1is good"}
+	{ "lag", "^4Server ^1is ^3not lagging" },
+	{ "/rates", " ^4Server ^1rates are : ^3..." },
+	{ "hacker", "^4Report ^1hacker to ^3Admin ^1by beginning msg with ^4@" },
+	{ "test", "^4You said ^3TEST" },
+	{ "/cmd", "^3Cmd ^4Test - Passed" }
 }
+
+new szArg[192]
 
 public plugin_init() {
-	register_plugin("Adverts & Auto Responder", "1.0", "DiGiTaL");
-	set_task(DELAY, "show_ads",_,_,_, "b");
+
+	register_plugin("Chat Bot", VERSION, "DiGiTaL")
+	register_cvar("chatbot", VERSION, FCVAR_SERVER|FCVAR_SPONLY)
 	register_clcmd("say", "handleSay")
 	register_clcmd("say_team", "handleSay")
+	set_task(DELAY, "show_ads",_,_,_, "b")
 }
 
 public show_ads() {
+
 	static numMsg
 	new players[32], num, x
 	get_players(players, num);
@@ -41,13 +51,22 @@ public show_ads() {
 
 public handleSay(id) {
 
-	new szArg[192]
-	read_args(szArg, 191)
+	read_args(szArg, charsmax(szArg))
 	remove_quotes(szArg)
+	set_task(PRINTDELAY, "PrintT", id)
+}
+
+public PrintT(id)
+{
 	for(new i=0; i < sizeof variables;i++)
 	{
 		if(containi(szArg, variables[i][text]) != -1)
+		{
+			#if defined PRINTTOALL
+			client_print_color(0, 0, "%s", variables[i][response])
+			#else 
 			client_print_color(id, 0, "%s", variables[i][response])
+			#endif
+		}
 	}
-	return PLUGIN_CONTINUE
 }
