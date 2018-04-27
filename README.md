@@ -18,3 +18,8 @@ new variables[][VARTYPE] =
 ```
 This will print : **Server is not lagging**<br>
 When some says **lag** in chat
+
+## Settings within Source 
+#define DELAY 30.0 ( Time delay between Public Ad Messages )<br>
+#define PRINTDELAY 0.2 ( Time delay between Response from Server )<br>
+//#define PRINTTOALL ( Uncomment if you want Response to be visible for all players )
