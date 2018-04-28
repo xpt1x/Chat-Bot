@@ -1,20 +1,32 @@
 #include <amxmodx>
-#define VERSION "1.1"
+#define VERSION "1.2"
 
-#define DELAY 30.0 
-#define PRINTDELAY 0.2
-//#define PRINTTOALL 
+/*```````````````````````````*/
+/*       CONFIGURATION       */
+/*```````````````````````````*/
 
+	#define BLOCKBlockWords
+	#define HIDE_SLASH
+	#define DELAY 30.0 
+	#define PRINTDELAY 0.2
+	//#define PRINTTOALL // ( Default : Off )
+
+/* ``````````````````````````*/
+
+new szArg[192];
 enum _:VARTYPE {
 	text[32], response[192]
 }
-
-new admessages[][] = 
+/* ````````````  PUBLIC AD MESSAGES HERE ``````````` */
+new adszArgs[][] = 
 {
 	"^1[^4ChatBot^1] ^3Sample Text^4 1",
 	"^1[^4ChatBot^1] ^3Sample Text^4 2",
 	"^1[^4ChatBot^1] ^3Sample Text^4 3"
 }
+/* `````````````````````````````````````````````````` */
+
+/* ````````````` TEXT AND RESPONSE HERE  ```````````` */
 
 new variables[][VARTYPE] =
 {
@@ -25,7 +37,18 @@ new variables[][VARTYPE] =
 	{ "/cmd", "^3Cmd ^4Test - Passed" }
 }
 
-new szArg[192]
+/* `````````````````````````````````````````````````` */
+/* `````````````` WORDS TO BLOCK HERE ``````````````` */
+
+#if defined BLOCKBlockWords
+
+new BlockWords[][] = 
+{
+	"fuck", "asshole", "dumbass", "shit"
+}
+
+/* ```````````````````````````````````````````````````*/
+#endif
 
 public plugin_init() {
 
@@ -44,7 +67,7 @@ public show_ads() {
 	
 	for(new i;i<num;i++) {
 		x = players[i];
-		client_print_color(x, 0, "%s", admessages[numMsg > charsmax(admessages) ? (numMsg = 0) : numMsg]);
+		client_print_color(x, 0, "%s", adszArgs[numMsg > charsmax(adszArgs) ? (numMsg = 0) : numMsg]);
 	}
 	numMsg++;
 }
@@ -53,7 +76,30 @@ public handleSay(id) {
 
 	read_args(szArg, charsmax(szArg))
 	remove_quotes(szArg)
+	#if defined HIDE_SLASH
+	if(szArg[0] == '/') return PLUGIN_HANDLED_MAIN
+	else if(szArg[0] == '!') return PLUGIN_HANDLED_MAIN
+	#endif
+	#if defined BLOCKBlockWords
+	new bool:isWord = false;
+	for(new i; i < sizeof BlockWords;i++) {
+
+		if(containi(szArg, BlockWords[i]) != -1) {
+
+			replace_string(szArg, charsmax(szArg), BlockWords[i], "", false)
+			isWord = true;		
+		} 
+	}
+
+	if(isWord) { 
+
+		new enCmd[32]
+		read_argv(0, enCmd, charsmax(enCmd))  
+		engclient_cmd(id, enCmd, szArg)    
+	}
+	#endif
 	set_task(PRINTDELAY, "PrintT", id)
+	return PLUGIN_CONTINUE
 }
 
 public PrintT(id)
