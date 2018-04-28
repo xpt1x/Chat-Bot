@@ -5,7 +5,7 @@
 /*       CONFIGURATION       */
 /*```````````````````````````*/
 
-	#define BLOCKBlockWords
+	#define BLOCKWORDS
 	#define HIDE_SLASH
 	#define DELAY 30.0 
 	#define PRINTDELAY 0.2
@@ -40,7 +40,7 @@ new variables[][VARTYPE] =
 /* `````````````````````````````````````````````````` */
 /* `````````````` WORDS TO BLOCK HERE ``````````````` */
 
-#if defined BLOCKBlockWords
+#if defined BLOCKWORDS
 
 new BlockWords[][] = 
 {
@@ -80,7 +80,7 @@ public handleSay(id) {
 	if(szArg[0] == '/') return PLUGIN_HANDLED_MAIN
 	else if(szArg[0] == '!') return PLUGIN_HANDLED_MAIN
 	#endif
-	#if defined BLOCKBlockWords
+	#if defined BLOCKWORDS
 	new bool:isWord = false;
 	for(new i; i < sizeof BlockWords;i++) {
 
